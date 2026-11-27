@@ -37,3 +37,6 @@
 #gameStage:fullscreen .p2system button{font-size:11px;padding:5px 9px}
 #gameStage:fullscreen .p2actions button{font-size:clamp(10px,3vh,20px)}
 @media(orientation:landscape) and (max-height:500px){#gameStage:fullscreen .p2pad{bottom:max(12px,env(safe-area-inset-bottom))}#gameStage:fullscreen .p2system{left:28%;right:28%;bottom:max(5px,env(safe-area-inset-bottom));gap:3px}#gameStage:fullscreen .p2system button{padding:4px 6px;font-size:10px}}
+
+/* V4.3: step-by-step game selection */
+#wizard{max-width:100%;margin:0 auto 18px}#wizard h2{font-size:clamp(22px,4vw,32px);margin:12px 0 20px}.modeChoices{display:grid;grid-template-columns:1fr 1fr;gap:12px}.modeChoices button{min-height:130px;font:900 clamp(22px,5vw,36px) monospace;background:#20283b;color:#a7f86d;border:1px solid #505b76}.modeChoices button:hover{background:#35445a}.modeChoices small{display:block;font:14px system-ui;color:#c5cbe0;margin-top:8px}#serverStep button{display:block;width:100%;text-align:left;padding:16px;margin:10px 0}#backStep{background:#303950;color:white}#playLayout:has(#socialArea[hidden]){grid-template-columns:1fr}
