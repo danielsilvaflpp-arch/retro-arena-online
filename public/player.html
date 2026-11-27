@@ -8,6 +8,9 @@ function patchManager(C){
   return original.call(this,path,data,...rest);
  };
 }
+// Mirror only the emulator's Web Audio output, never microphone or desktop.
+window.retroAudioTrack=null;
+(()=>{const taps=new WeakMap();const proto=window.AudioNode?.prototype;if(!proto)return;const connect=proto.connect;proto.connect=function(dest,...args){const result=connect.call(this,dest,...args);try{const ctx=this.context;if(dest===ctx.destination&&ctx.createMediaStreamDestination){let tap=taps.get(ctx);if(!tap){tap={node:ctx.createMediaStreamDestination(),sources:new WeakSet()};taps.set(ctx,tap);}if(!tap.sources.has(this)){connect.call(this,tap.node,args[0]||0,0);tap.sources.add(this);}window.retroAudioTrack=tap.node.stream.getAudioTracks()[0];}}catch(e){console.warn('Retro audio:',e);}return result;};})();
 let manager=window.EJS_GameManager;
 if(manager) patchManager(manager);
 else Object.defineProperty(window,'EJS_GameManager',{configurable:true,get(){return manager;},set(value){manager=value;patchManager(value);}});
