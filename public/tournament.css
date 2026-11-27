@@ -3,3 +3,16 @@
 .financeBox{border:1px solid #414762;border-radius:10px;padding:12px;margin:12px 0}.financeBox p{margin:6px 0}.financeBox input{max-width:100%}
 
 .pixDemoQR{display:block;margin:12px auto;background:white;border:8px solid white;max-width:100%;height:auto;image-rendering:pixelated}.financeBox details{margin-top:10px;padding:10px;border:1px solid #a7f86d;border-radius:8px}.financeBox summary{cursor:pointer;color:#a7f86d}
+
+/* V1.5.2: desktop uses physical inputs; spectators retain existing hidden state. */
+html[data-retro-input="desktop"] #remoteControls{display:none!important}
+#hostFull{position:absolute;top:5px;right:7px;z-index:25;width:auto;background:#101424b8;color:white;padding:4px 9px;font-size:20px}
+.retroRotateHint{display:none;pointer-events:none;position:absolute;z-index:30;left:50%;top:12%;transform:translateX(-50%);background:#101424d9;color:white;padding:5px 9px;border-radius:6px;font-size:12px;white-space:nowrap}
+@media(orientation:portrait){html[data-retro-input="touch"] #gameStage:is(:fullscreen,.retroPseudoFull)>.retroRotateHint{display:block}}
+html.retroPseudoActive{overflow:hidden}#gameStage.retroPseudoFull{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border-radius:0;z-index:2147483000;background:black;display:block;overflow:hidden;container-type:normal}
+#gameStage.retroPseudoFull #screen{position:absolute;inset:0;width:100%;height:100%;max-height:none;aspect-ratio:auto;border:0;display:block;overflow:hidden}
+#gameStage.retroPseudoFull #screen>video,#gameStage.retroPseudoFull #screen>iframe{position:absolute;inset:0;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain}
+#gameStage.retroPseudoFull .p2joystick,#gameStage.retroPseudoFull .p2actions{width:min(24vw,34dvh,150px);min-width:0;flex-shrink:0}
+#gameStage.retroPseudoFull .p2pad{bottom:max(36px,env(safe-area-inset-bottom));left:max(3%,env(safe-area-inset-left));right:max(3%,env(safe-area-inset-right))}
+#gameStage.retroPseudoFull .p2system{bottom:max(5px,env(safe-area-inset-bottom));flex-wrap:nowrap}
+#gameStage:is(:fullscreen,.retroPseudoFull) #hostFull,#gameStage.retroPseudoFull #stageFull{top:max(5px,env(safe-area-inset-top));right:max(7px,env(safe-area-inset-right));margin:0}
