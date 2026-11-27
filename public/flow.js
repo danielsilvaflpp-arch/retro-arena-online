@@ -10,6 +10,7 @@ function render(){
  $('solo').hidden=mode!=='solo';$('multi').hidden=mode!=='duo';
  if(step===3)say('selectionSummary',(mode==='solo'?'SOLO':'DUO')+' · '+selected.name);
 }
+let machines=[];function drawHosts(){const box=$('cloudServers');box.replaceChildren();for(const h of machines){const b=document.createElement('button');b.textContent=h.name+(h.busy?' — Ocupado':' — Disponível');b.disabled=h.busy;b.onclick=()=>{if(selected)location.href='/cloud-play.html?'+new URLSearchParams({host:h.id,game:selected.id,mode});};box.append(b);}if(!machines.length)box.textContent='Nenhuma máquina anfitriã conectada.';}socket.on('cloud:list',h=>{machines=h;drawHosts();});socket.on('connect',()=>socket.emit('cloud:list'));socket.emit('cloud:list');drawHosts();
 function start(m){mode=m;step=2;selected=null;render();}
 $('pickSolo').onclick=()=>start('solo');$('pickDuo').onclick=()=>start('duo');
 window.selectCatalogGame=g=>{selected=g;step=3;render();};

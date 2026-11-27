@@ -14,4 +14,5 @@ io.on('connection',s=>{s.emit('ranking',board());let last=0;
  s.on('game',d=>{const r=rooms.get(s.data.room);if(!r||r.players.keys().next().value!==s.id||!d||!(/^[a-f0-9]{64}$/.test(d.hash)))return;r.game={hash:d.hash,name:clean(d.name,100)};state(r);});
  s.on('played',()=>{const r=rooms.get(s.data.room);if(!r||!r.game||r.players.size!==2||s.data.lastGame===r.id+':'+r.game.hash)return;s.data.lastGame=r.id+':'+r.game.hash;scores.set(s.data.name,(scores.get(s.data.name)||0)+1);io.emit('ranking',board());});
  s.on('rtc',d=>{const r=rooms.get(s.data.room);if(!r||!d||!r.players.has(d.to)||d.to===s.id||!['ready','offer','answer','ice','stop'].includes(d.type))return;io.to(d.to).emit('rtc',{from:s.id,type:d.type,data:d.data,room:r.id});}); s.on('leave',()=>leave(s));s.on('disconnect',()=>leave(s));});
+require("./cloud")(io);
 server.listen(process.env.PORT||3000,'0.0.0.0');
