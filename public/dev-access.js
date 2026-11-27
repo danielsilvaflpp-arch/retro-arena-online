@@ -1,0 +1,1 @@
+(()=>{const go=()=>location.assign('/dev.html');window.addEventListener('keydown',e=>{if(e.ctrlKey&&e.code==='F8'&&!e.repeat){e.preventDefault();go();}});let taps=0,last=0;document.getElementById('brand')?.addEventListener('click',()=>{const now=Date.now();taps=now-last>900?1:taps+1;last=now;if(taps>=5)go();});})();
