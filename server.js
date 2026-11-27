@@ -1,7 +1,7 @@
 const express=require('express'), http=require('http'), crypto=require('crypto');
 const app=express(), server=http.createServer(app), io=new (require('socket.io').Server)(server,{maxHttpBufferSize:16384});
 const rooms=new Map(), scores=new Map();
-app.use(express.static('public')); app.get('/health',(_,r)=>r.send('ok'));
+app.use(express.static('public',{maxAge:0})); require('./catalog')(app); app.get('/health',(_,r)=>r.send('ok'));
 app.get('/config',(_,r)=>r.json({netplay:process.env.NETPLAY_URL||'',ice:[{urls:'stun:stun.l.google.com:19302'},...(process.env.TURN_URL?[{urls:process.env.TURN_URL,username:process.env.TURN_USER,credential:process.env.TURN_PASSWORD}]:[])]}));
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
 const clean=(x,n)=>typeof x==='string'?x.trim().slice(0,n):'';
