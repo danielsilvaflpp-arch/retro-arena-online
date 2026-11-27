@@ -1,5 +1,5 @@
 (()=>{
-let mode='',step='mode',selected=null,target=null,invite=new URLSearchParams(location.search).has('room'),machines=[];
+let mode='',step='mode',selected=null,target=null,invite=false,machines=[];
 const show=(id,v)=>$(id).hidden=!v;
 let saved=[];try{saved=JSON.parse(localStorage.getItem('retro.savedHosts.v1')||'[]');if(!Array.isArray(saved))saved=[];}catch{}
 function store(){try{localStorage.setItem('retro.savedHosts.v1',JSON.stringify(saved));}catch{}}
@@ -7,7 +7,7 @@ function render(){
  const guest=room&&room.host!==socket.id;
  const title={mode:'Como deseja jogar?',servers:'Escolha o servidor',games:'Escolha seu jogo',play:guest?'Partida compartilhada':mode==='solo'?'Modo solo':'Modo duo'};
  say('stepLabel',step==='mode'?'ETAPA 01 / 03':step==='servers'?'ETAPA 02 / 03':step==='games'?'ETAPA 03 / 03':'PARTIDA');say('stepTitle',title[step]);
- show('modeStep',step==='mode');show('serverStep',step==='servers');show('backStep',step==='servers'||step==='games'||(step==='play'&&!invite));show('playLayout',step==='games'||step==='play');show('gameArticle',!invite||!!room);show('catalogArea',step==='games'&&!guest);show('manual',false);show('launchArea',step==='play');show('roomArticle',step==='play'&&mode==='duo');show('socialArea',step==='play'&&mode==='duo');
+ show('modeStep',step==='mode');show('serverStep',step==='servers');show('backStep',step==='servers'||step==='games'||(step==='play'&&!invite));show('playLayout',step==='games'||step==='play');show('gameArticle',!invite||!!room);show('catalogArea',step==='games'&&!guest);show('manual',false);show('launchArea',step==='play');show('roomArticle',false);show('socialArea',false);show('localServer',mode==='solo');
  $('gameTitle').textContent=step==='games'?'Catálogo':selected?.name||'Partida compartilhada';$('solo').hidden=mode!=='solo';$('multi').hidden=mode!=='duo';
  say('selectionSummary',(mode==='solo'?'SOLO':'DUO')+' · Selecione uma máquina');
  if(step==='servers')drawHosts();
@@ -20,10 +20,10 @@ $('addHost').onclick=()=>show('addHostForm',$('addHostForm').hidden);
 $('addHostForm').onsubmit=e=>{e.preventDefault();const pin=$('addHostCode').value.trim();const alias=$('addHostName').value.trim();say('addHostStatus','Procurando máquina…');socket.timeout(5000).emit('cloud:find',{pin},(err,r)=>{if(err||r?.error||!r?.host)return say('addHostStatus',r?.error||'Não foi possível localizar a máquina.');const h=r.host;const name=alias||h.name;saved=saved.filter(x=>x.id!==h.machineId);saved.push({id:h.machineId,name});store();$('addHostCode').value='';$('addHostName').value='';say('addHostStatus','Servidor salvo.');show('addHostForm',false);drawHosts();});};
 function start(m){mode=m;step='servers';selected=null;target=null;render();socket.emit('cloud:list');}
 $('pickSolo').onclick=()=>start('solo');$('pickDuo').onclick=()=>start('duo');
-$('localServer').onclick=()=>{target=null;step='games';render();};
+$('localServer').onclick=()=>{if(mode!=='solo')return;target=null;step='games';render();};
 window.selectCatalogGame=async g=>{selected=g;if(target){const h=machines.find(x=>x.id===target.id);if(!h||h.busy){step='servers';render();return;}location.href='/cloud-play.html?'+new URLSearchParams({host:h.id,game:g.id,mode});return;}step='play';render();await window.loadCatalogGame(g);if(mode==='solo'&&file&&digest)$('solo').click();};
 $('backStep').onclick=()=>{if(room){$('leave').click();return;}if(step==='play')step='games';else if(step==='games')step='servers';else step='mode';render();};
-socket.on('room',()=>{if(room&&room.host!==socket.id){mode='duo';step='play';render();}});
+
 $('leave').addEventListener('click',()=>{invite=false;step='mode';mode='';selected=null;target=null;history.replaceState(null,'',location.pathname);render();});
-if(invite){mode='duo';step='play';}render();
+if(new URLSearchParams(location.search).has('room'))history.replaceState(null,'',location.pathname);render();
 })();
